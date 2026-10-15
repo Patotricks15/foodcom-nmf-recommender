@@ -1,0 +1,35 @@
+\section{Results}
+\label{sec:results}
+\begin{table}[h]
+\centering\scriptsize
+\caption{Global temporal test results on the reproducible fixture.}
+\input{tables/results}
+\end{table}
+
+\begin{table}[h]
+\centering\scriptsize
+\caption{Nutrition filter impact on NMF (k=10, 50-recipe candidate pool).}
+\input{tables/filter-impact}
+\end{table}
+
+ItemKNN is strongest on the fixture; NMF substantially improves over the
+popularity floor but does not beat the tuned neighbourhood method on raw
+ranking quality. This negative result is retained deliberately: the point
+of this portfolio entry is interpretability and a principled nutrition
+constraint, not a claim that NMF dominates every classical baseline.
+
+The nutrition filter removes the large majority of the 50-recipe candidate
+pool under the (realistic, moderately strict) 450-calorie/600-mg-sodium
+constraint used here, and the resulting NDCG@10 drop quantifies the cost of
+enforcing that constraint rather than leaving it hidden inside an opaque
+re-ranking step. A looser constraint removes fewer candidates and costs
+less ranking quality; both numbers are reported by
+\texttt{scripts/export\_results\_table.py} for any constraint setting, so
+the trade-off is inspectable rather than asserted.
+
+\section{Deployment}
+Training writes factors and feature tables to S3 and publishes precomputed,
+already nutrition-filtered top-$N$ lists to DynamoDB. Lambda performs a
+bounded key lookup. EventBridge schedules nightly retraining and CloudWatch
+receives logs. The default Terraform profile targets the local Floci AWS
+emulator and therefore requires no paid AWS account.

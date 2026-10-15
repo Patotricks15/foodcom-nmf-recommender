@@ -1,0 +1,21 @@
+\section{Dataset and Split}
+Food.com Recipes and Reviews pairs a recipe catalogue (name, category,
+ingredients, and nutrition facts: calories, fat, sodium, protein,
+carbohydrate, sugar) with roughly 1.4M user reviews carrying a real Unix
+timestamp. Reviews of at least four (on the platform's 0--5 scale) define
+positive implicit interactions; lower ratings are dropped rather than
+treated as negatives, since they carry strictly more signal than an
+unobserved interaction. An iterative five-core filter removes users and
+recipes without enough evidence on either side, repeated until the filtered
+set is stable.
+
+If $\tau_1$ and $\tau_2$ are the 80th and 90th percentiles of the review
+timestamp distribution, training uses $t < \tau_1$, validation uses
+$\tau_1 \le t < \tau_2$, and test uses $t \ge \tau_2$. Evaluation rows for
+users absent from training are dropped and the resulting cold-user rate is
+reported rather than silently folding those users into the popularity
+prior. All feature transformations are fitted on the training partition
+only. Leave-last-one-out is also implemented and reported as a secondary
+protocol: it holds out each user's final two chronological interactions
+regardless of the global time axis, and is the convention most published
+recipe-recommendation notebooks use.

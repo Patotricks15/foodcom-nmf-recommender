@@ -1,0 +1,23 @@
+\section{Feature Engineering}
+Features are declared in \texttt{conf/features.yaml} and implemented in
+\texttt{src/recommender/features/}, following the same declarative
+registry pattern used throughout this portfolio: a feature cannot be
+computed without being declared, and a declaration cannot go unimplemented.
+Every point-in-time feature receives an explicit cut-off timestamp and is
+covered by adversarial leakage tests that forge future interactions,
+compare cut-offs, and scramble the training association to confirm the
+pipeline cannot read what it should not see.
+
+\input{tables/features}
+
+User features capture activity volume, average rating generosity, taste
+tenure, and recency relative to the cut-off. Recipe features capture
+catalogue-wide and trailing popularity, category, and -- distinct from the
+companion MovieLens and anime projects -- a direct passthrough of nutrition
+facts (calories, sodium). The nutrition fields are deliberately excluded
+from the collaborative model's training matrix: they are consumed only by
+the post-hoc filter described in Section~\ref{sec:methodology}, so the
+dietary constraint remains independent of whatever the factorization has
+learned from review co-occurrence.
+
+\input{tables/feature-rationale}

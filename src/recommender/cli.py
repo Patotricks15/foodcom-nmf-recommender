@@ -121,8 +121,8 @@ def main() -> None:
     evaluate_parser.add_argument("--partition", choices=["validation", "test"], default="test")
     evaluate_parser.add_argument("--k", type=int, default=10)
     evaluate_parser.add_argument("--nutrition-filter", action="store_true")
-    evaluate_parser.add_argument("--max-calories", type=float, default=700.0)
-    evaluate_parser.add_argument("--max-sodium-mg", type=float, default=1500.0)
+    evaluate_parser.add_argument("--max-calories", type=float, default=450.0)
+    evaluate_parser.add_argument("--max-sodium-mg", type=float, default=600.0)
     evaluate_parser.set_defaults(func=evaluate_command)
 
     recommend = commands.add_parser("recommend")
@@ -130,8 +130,8 @@ def main() -> None:
     recommend.add_argument("--k", type=int, default=10)
     recommend.add_argument("--candidate-pool", type=int, default=50)
     recommend.add_argument("--nutrition-filter", action="store_true")
-    recommend.add_argument("--max-calories", type=float, default=700.0)
-    recommend.add_argument("--max-sodium-mg", type=float, default=1500.0)
+    recommend.add_argument("--max-calories", type=float, default=450.0)
+    recommend.add_argument("--max-sodium-mg", type=float, default=600.0)
     recommend.set_defaults(func=recommend_command)
 
     args = parser.parse_args()

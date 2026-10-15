@@ -1,0 +1,15 @@
+\section{Limitations and Conclusion}
+NMF is additive and inexpensive, and we have shown its latent components
+admit a non-negative "flavor profile" reading that signed factorizations
+cannot offer, but it does not model temporal drift inside the
+factorization and offers only a popularity fallback for cold users, the
+same limitation PureSVD carries in the companion MovieLens project. The
+nutrition filter is a hard post-filter rather than a learned constraint,
+which is a deliberate safety choice but means its interaction with ranking
+quality must be measured explicitly, as we do in Section~\ref{sec:results},
+rather than assumed away. Results on the synthetic fixture are not claims
+about the full 1.4M-review Food.com dataset. The project demonstrates a
+leakage-resistant, tested classical recommendation pipeline that combines
+an interpretable collaborative model with an auditable domain constraint,
+rather than a claim that NMF or any single nutrition-filter setting is
+optimal.

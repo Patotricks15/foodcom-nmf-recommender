@@ -1,0 +1,75 @@
+\section{Methodology}
+\label{sec:methodology}
+Let $X \in \mathbb{R}_{\ge 0}^{|\mathcal{U}| \times |\mathcal{I}|}$ be the
+non-negative training interaction matrix (binary in this work: $X_{ui}=1$
+if user $u$ positively reviewed recipe $i$ before the cut-off, else $0$).
+Non-negative Matrix Factorization seeks two non-negative factor matrices
+$W \in \mathbb{R}_{\ge 0}^{|\mathcal{U}| \times k}$ and
+$H \in \mathbb{R}_{\ge 0}^{k \times |\mathcal{I}|}$ such that
+
+\[
+X \approx WH, \qquad W \ge 0,\ H \ge 0,
+\]
+
+by minimizing the squared Frobenius reconstruction error
+
+\[
+\min_{W,H \ge 0} \lVert X - WH \rVert_F^2.
+\]
+
+We implement Lee and Seung's multiplicative update rules
+\cite{lee1999learning} directly in NumPy rather than via automatic
+differentiation or a gradient-descent optimizer. Each sweep applies, in
+order,
+
+\[
+H \leftarrow H \odot \frac{W^\top X}{W^\top W H},
+\qquad
+W \leftarrow W \odot \frac{X H^\top}{W H H^\top},
+\]
+
+where $\odot$ and the division are element-wise and a small additive
+constant stabilizes the denominator against exact zeros. Both updates are
+non-negative, element-wise ratios of non-negative quantities applied to the
+already non-negative current factors, so $W$ and $H$ remain non-negative at
+every sweep without an explicit projection step. Lee and Seung show that
+the Frobenius objective is non-increasing under these updates
+\cite{lee2001algorithms}; we verify this empirically for our
+implementation in \texttt{tests/test\_models.py} by tracking the
+reconstruction error across iterations and asserting it never increases.
+
+The recommendation score for user $u$ and recipe $i$ is $\hat y_{ui} =
+W_{u:} H_{:i}$. Recipes already reviewed by $u$ in training are removed
+before top-$N$ selection; a user absent from training receives the
+catalogue popularity ordering as a cold-start fallback.
+
+\subsection{Interpretability}
+Because every entry of $W$ and $H$ is non-negative, a column of $H$ can only
+add to, never subtract from, a recipe's reconstructed score. Each latent
+component is therefore a non-negative mixture of recipes -- legible as a
+"flavor/ingredient profile" -- and each user is a non-negative mixture of
+such components. A signed factorization (PureSVD) admits no such reading:
+a large positive loading on one latent direction may be entirely cancelled
+by a large negative loading on another, so individual factors do not
+correspond to anything a person would recognize as a coherent taste
+profile.
+
+\subsection{Nutrition-aware post-filter}
+Let $R_u = (i_1, \dots, i_m)$ be the ranked candidate list the
+factorization produces for user $u$, ordered by $\hat y_{u i_1} \ge \dots
+\ge \hat y_{u i_m}$. The nutrition filter is a hard, order-preserving
+post-filter: given per-recipe calorie, sodium, and allergen-ingredient
+attributes $a_i$ and a constraint set $\mathcal{C}$ (e.g. maximum calories,
+maximum sodium, excluded allergen tokens), it produces the surviving
+sublist
+\[
+R_u' = \big( i_j \in R_u : i_j \text{ does not violate } \mathcal{C} \big),
+\]
+preserving the relative order of survivors. $R_u'$ is truncated to the
+final list length $k$ after filtering, so a sufficiently large candidate
+pool must be requested from the factorization to leave $k$ survivors after
+filtering. Because the filter reads $a_i$ directly from the recipe
+catalogue rather than from anything the factorization produced, a
+constraint holds regardless of what the collaborative signal has learned,
+and the filter's effect on ranking quality can be measured in isolation
+(Section~\ref{sec:results}).

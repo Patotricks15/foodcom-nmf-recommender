@@ -1,0 +1,25 @@
+\section{Experiments}
+We benchmark three models against the primary temporal split: the
+hand-written multiplicative-update NMF ($k=16$ latent factors), a shrunk
+cosine item-$k$NN baseline, and a non-personalised popularity baseline.
+Ranking quality is measured at $K=10$ with Recall@$K$, NDCG@$K$, Mean
+Average Precision at $K$ (MAP@$K$), and catalogue coverage: the fraction of
+recipes that appear in at least one user's top-$K$ list across the
+evaluated population. Candidates for every model are the full recipe
+catalogue minus the user's training history.
+
+To measure the nutrition filter's effect in isolation from any ranking
+quality difference between models, we fix the model to NMF, request a
+candidate pool of 50 recipes per user, apply the filter
+(\texttt{max\_calories=450}, \texttt{max\_sodium\_mg=600}, reflecting a
+"light meal, moderate sodium" profile), and compare NDCG@10 and Recall@10
+on the first 10 survivors against the unfiltered first 10 candidates from
+the same pool. We additionally report the mean fraction of the 50-recipe
+candidate pool that the filter removes, which is the direct cost of
+enforcing the constraint.
+
+All numbers in Section~\ref{sec:results} are produced by
+\texttt{scripts/export\_results\_table.py} against the synthetic fixture
+described in \texttt{scripts/download\_data.py}, run with no network access
+or Kaggle credentials, so the pipeline, this paper, and the CI workflow all
+execute identically.

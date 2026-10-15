@@ -1,0 +1,33 @@
+\section{Introduction}
+Recipe recommendation differs from movie or anime recommendation in one
+structural way: every candidate carries hard, user-specific domain
+constraints -- calories, sodium, allergens -- that a purely collaborative
+ranking has no mechanism to respect. A model that ranks a peanut-laden
+dessert first for a user with a peanut allergy is not merely suboptimal, it
+is unsafe. This motivates pairing a classical collaborative-filtering model
+with an explicit, independently auditable nutrition-aware post-filter,
+rather than hoping the ranker implicitly learns dietary restrictions from
+sparse review data.
+
+We choose Non-negative Matrix Factorization (NMF) as the collaborative
+component, in contrast to the signed truncated SVD used for temporal movie
+ranking and the pairwise BPR embeddings used for anime ranking in companion
+projects of this portfolio. NMF constrains both factor matrices to be
+element-wise non-negative, which forces every latent component to be an
+additive, non-negative combination of recipes rather than a direction that
+can cancel against other directions. The practical consequence is
+interpretability: a column of the item-factor matrix reads as a
+non-negative "flavor/ingredient profile" -- a recipe either participates in
+a profile or it does not, and a user's affinity to it is never used to
+cancel out affinity to another profile. Signed factorizations cannot offer
+this reading, since a large positive loading on one factor can be entirely
+compensated by a large negative loading elsewhere.
+
+Food.com reviews, like MovieLens ratings, carry real event timestamps. We
+therefore follow the temporal-split convention established for time-aware
+recommendation in this portfolio: the primary evaluation protocol is a
+global wall-clock cut-off, with leave-last-one-out reported as a secondary
+protocol for comparability with the per-user evaluation most published
+notebooks use. All feature engineering is point-in-time correct under the
+primary protocol, and the gap between the two protocols is reported rather
+than hidden.

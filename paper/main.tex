@@ -1,0 +1,29 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,graphicx,hyperref}
+\title{Interpretable Non-negative Matrix Factorization for Nutrition-Aware Recipe Recommendation}
+\author{Patrick Gomes de Oliveira}
+\date{\today}
+\begin{document}
+\maketitle
+\begin{abstract}
+We evaluate a from-scratch, multiplicative-update Non-negative Matrix
+Factorization (NMF) for top-$N$ Food.com recipe recommendation under a
+strict global temporal split, combined with a post-hoc nutrition-aware
+filter over calories, sodium, and allergens. Unlike signed factorizations
+or pairwise-ranking embeddings, NMF constrains both factor matrices to be
+non-negative, yielding additive, interpretable latent components. The
+system includes point-in-time features, strong non-neural baselines,
+reproducible Floci/AWS infrastructure, and a measurement of how much the
+nutrition filter changes the ranking.
+\end{abstract}
+\input{sections/01-introduction}
+\input{sections/02-dataset}
+\input{sections/03-feature-engineering}
+\input{sections/04-methodology}
+\input{sections/05-experiments}
+\input{sections/06-results}
+\input{sections/07-conclusion}
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
